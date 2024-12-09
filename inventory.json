@@ -1,0 +1,24 @@
+{
+    "featured": [
+        {
+            "name": "Lager",
+            "description": "Crisp and refreshing.",
+            "price": 5
+        },
+        {
+            "name": "IPA",
+            "description": "Hoppy and bold.",
+            "price": 7
+        }
+    ],
+    "stock": [
+        {
+            "name": "Lager",
+            "quantity": 50
+        },
+        {
+            "name": "IPA",
+            "quantity": 30
+        }
+    ]
+}
