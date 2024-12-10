@@ -1,18 +1,43 @@
-// Configuração Firebase
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-  };
+  apiKey: "AIzaSyA6BpHOFDoEerP5d200EtPV8-oMPZnABRs",
+  authDomain: "beerbackend-c1820.firebaseapp.com",
+  databaseURL: "https://beerbackend-c1820-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "beerbackend-c1820",
+  storageBucket: "beerbackend-c1820.firebasestorage.app",
+  messagingSenderId: "1041485781360",
+  appId: "1:1041485781360:web:87272bbde21a28e84357b5",
+  measurementId: "G-L9PQK5SZXG"
+};
   
   const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
   const db = firebase.database();
 
-
+// Login
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+  
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      const userId = userCredential.user.uid;
+      const userRef = db.ref(`users/${userId}`);
+      userRef.once("value").then((snapshot) => {
+        const userData = snapshot.val();
+        if (userData.role === "admin") {
+          window.location.href = "/admin.html";
+        } else {
+          window.location.href = "/user.html";
+        }
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  });
 
 ////////////////////////////////////////////
 
