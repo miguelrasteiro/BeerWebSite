@@ -1,4 +1,10 @@
 
+// Importando os módulos necessários
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -13,9 +19,9 @@ const firebaseConfig = {
 };
   
 // Inicializar Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 // Login
 document.getElementById("login-form").addEventListener("submit", async (e) => {
@@ -105,6 +111,38 @@ function sendEmailToStore(userEmail, beerType) {
   console.log(`Mensagem: O usuário reservou uma cerveja do tipo ${beerType}.`);
 }
 
+// Exibir cervejas para admins
+function loadBeersForAdmin() {
+  const beerList = document.getElementById("beer-list");
+  const beersRef = db.ref("beers");
+
+  beersRef.on("value", (snapshot) => {
+    beerList.innerHTML = ""; // Limpa a lista
+    snapshot.forEach((childSnapshot) => {
+      const beer = childSnapshot.val();
+      const beerId = childSnapshot.key;
+      
+      const beerDiv = document.createElement("div");
+      beerDiv.innerHTML = `
+        <h3>${beer.tipo}</h3>
+        <p>Quantidade: ${beer.quantidade}</p>
+        <button onclick="updateStock('${beerId}')">Alterar Estoque</button>
+      `;
+      beerList.appendChild(beerDiv);
+    });
+  });
+}
+
+// Função para alterar o estoque
+function updateStock(beerId) {
+  const newStock = prompt("Digite a nova quantidade:");
+  
+  if (newStock !== null) {
+    const beerRef = db.ref(`beers/${beerId}`);
+    beerRef.update({ quantidade: parseInt(newStock) });
+    alert("Estoque atualizado!");
+  }
+}
 
 // Logout
 document.getElementById("logout-btn").addEventListener("click", () => {
